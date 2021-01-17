@@ -1,6 +1,6 @@
 # Safe SJTU Backend
 
-`The following procedures are only used for developer since everything is under construction. A tutorial will be written afster major features are well accomplished.`
+`The following procedures are only used for developer since everything is under construction. A tutorial will be written after major features are well accomplished.`
 
 ## How to configure the python environment
 
