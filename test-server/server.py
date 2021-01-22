@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY']='Th1s1ss3cr3t'
 
-database_name = 'DriveS_v2'
+database_name = 'DriveS'
 
 client = InfluxDBClient('localhost', 8086, 'root', 'root', database_name)
 client.create_database(database_name)
@@ -78,21 +78,21 @@ def token_required(f):
             return jsonify({'message': 'a valid token is missing'}), 400
 
         data = jwt.decode(token, 
-                            key=app.config['SECRET_KEY'],
-                            algorithms="HS256") 
+                          key=app.config['SECRET_KEY'],
+                          algorithms="HS256") 
         try:  
-            public_id = data['public_id']
-            results = client.query("SELECT * from usertable where public_id='{}';".format(public_id))
+            username = data['username']
+            results = client.query("SELECT * from usertable where username='{}';".format(username))
             points = results.get_points()
             size = sum(1 for point in points)
             if size == 0:
                 return jsonify({'message': 'do not find user'}), 400
             if size > 1:
-                return jsonify({'message': 'multiple user with same public_id found'}), 400
+                return jsonify({'message': 'multiple user with same username found'}), 400
         except:  
             return jsonify({'message': 'token is invalid'})  
 
-        return f(public_id, *args,  **kwargs)  
+        return f(username, *args,  **kwargs)  
 
     return decorator 
         
@@ -114,8 +114,6 @@ def signup_user():
 
     password_hash = generate_password_hash(auth.password, method='sha256')
 
-    public_id = str(uuid.uuid4())
-
     json_body = [
         {
             "measurement": "usertable",
@@ -124,8 +122,7 @@ def signup_user():
                 "username": username
             },
             "fields": {
-                "password_hash": password_hash,
-                "public_id": public_id
+                "password_hash": password_hash
             }
         }
     ]
@@ -154,10 +151,9 @@ def login_user():
         return jsonify({'message': 'user not found'}), 400
 
     password_hash = point['password_hash']
-    public_id = point['public_id']
         
     if check_password_hash(password_hash, auth.password):  
-        token = jwt.encode({'public_id': public_id, 'exp' : datetime.utcnow() + timedelta(days=365)}, 
+        token = jwt.encode({'username': username, 'exp' : datetime.utcnow() + timedelta(days=365)}, 
                            app.config['SECRET_KEY'],
                            algorithm="HS256")  
         return jsonify({'token' : token}), 200
@@ -167,7 +163,7 @@ def login_user():
 
 @app.route('/upload', methods=['POST'])
 @token_required
-def create_author(public_id):
+def create_author(username):
     '''
     * Format of request in Swift
     * let body = ["UserID":uuid,
@@ -177,41 +173,45 @@ def create_author(public_id):
     * Format of each line in Data in Swift
     * uploadBuffer += (Date().GetTime+",\(velocity),\(accCal[1]),\(gyroCal[2]),\(latitude),\(longitude),\n")
     '''
-    data = json.loads(request.get_data(as_text=True))
-    uuid = data['UserID']
-    LaunchTimestamp = data['LaunchTimestamp']
-    Data = data['Data']
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        uuid = data['UserID']
+        LaunchTimestamp = data['LaunchTimestamp']
+        Data = data['Data']
 
-    Data = Data.splitlines()
-    for line in Data:
-        line = line.split(',')
-        # print(line)
-        body = [
-            {
-                "measurement": "data",
-                "time": line[0],
-                "tags":{
-                    "uuid": uuid,
-                    "launch": LaunchTimestamp,
-                    "public_id": public_id
-                },
-                "fields": {
-                    "velocity":float(line[1]),
-                    "acceleration":float(line[2]),
-                    "gyroscope":float(line[3]),
-                    "latitude":float(line[4]),
-                    "longitude":float(line[5])
+        Data = Data.splitlines()
+        for line in Data:
+            line = line.split(',')
+            # print(line)
+            body = [
+                {
+                    "measurement": "data",
+                    "time": line[0],
+                    "tags":{
+                        "uuid": uuid,
+                        "launch": LaunchTimestamp,
+                        "username": username
+                    },
+                    "fields": {
+                        "velocity":float(line[1]),
+                        "acceleration":float(line[2]),
+                        "gyroscope":float(line[3]),
+                        "latitude":float(line[4]),
+                        "longitude":float(line[5])
+                    }
                 }
-            }
-        ]
-        client.write_points(body)
+            ]
+            client.write_points(body)
 
+        return jsonify({'message' : 'package received'}), 200
 
-    return jsonify({'message' : 'package received'}), 200
+    except:
+
+        return jsonify({'message' : 'error occured'}), 400
 
 
 if  __name__ == '__main__': 
-    from werkzeug.contrib.fixers import ProxyFix
+    from werkzeug.middleware.proxy_fix import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
     
     # app.run(debug=True) 
