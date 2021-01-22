@@ -18,6 +18,10 @@ database_name = 'DriveS_v2'
 client = InfluxDBClient('localhost', 8086, 'root', 'root', database_name)
 client.create_database(database_name)
 
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    return 'hello world'
+
 """
 Database: DriveS_v2
 Measurement: usertable
@@ -206,6 +210,9 @@ def create_author(public_id):
     return jsonify({'message' : 'package received'}), 200
 
 
-if  __name__ == '__main__':  
-    #  app.run(debug=True) 
-    app.run(host='0.0.0.0', port=5000)
+if  __name__ == '__main__': 
+    from werkzeug.contrib.fixers import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+    
+    # app.run(debug=True) 
+    app.run(host='0.0.0.0', port=5001, debug=True)
