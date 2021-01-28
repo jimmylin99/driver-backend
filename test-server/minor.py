@@ -33,6 +33,8 @@ def get_track_longitude_latitude(client, ith_recent):
         _latitude = kv.get('latitude', '')
         if _longitude == '' or _latitude == '':
             return 'one or more of the points lack(s) longitude or latitude data', None, None
+        if _longitude == 0 or _latitude == 0:
+            continue
         list.append(kv)
         longitude_list.append(_longitude)
         latitude_list.append(_latitude)
