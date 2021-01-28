@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, render_template
 from influxdb import InfluxDBClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid 
@@ -208,6 +208,43 @@ def create_author(username):
     except:
 
         return jsonify({'message' : 'error occured'}), 400
+
+
+@app.route('/replay')
+def replay():
+    return render_template('index.html')
+
+
+@app.route('/points/chendy/0_th_recent', methods=['GET'])
+def data_post():
+    from minor import get_track_longitude_latitude
+    status, longitude_list, latitude_list = get_track_longitude_latitude(
+        client, 0
+    )
+    points = []
+    if status == 'OK':
+        if len(longitude_list) == len(latitude_list) and \
+           len(longitude_list) > 0:
+            for i in range(len(longitude_list)):
+                points.append([latitude_list[i], longitude_list[i]])
+        else:
+            print('length of longitude and latitude '
+                  'are not the same')
+    else:
+        print(status)
+    
+    # return jsonify(
+    #     {'message': [
+    #         {'status': status},
+    #         {'lo': longitude_list},
+    #         {'la': latitude_list}
+
+    #     ]},
+    #     200
+    # )
+    return json.dumps({
+        'points': points
+    })
 
 
 if  __name__ == '__main__': 

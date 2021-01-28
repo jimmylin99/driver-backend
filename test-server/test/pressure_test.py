@@ -9,23 +9,23 @@ from datetime import date, datetime
 * uploadBuffer += (Date().GetTime+",\(velocity),\(accCal[1]),\(gyroCal[2]),\(latitude),\(longitude),\n")
 '''
 
-records_num = 1
-url = 'http://server.acemap.cn:24050'
-# url = 'http://localhost:5001'
+records_num = 20
+# url = 'http://server.acemap.cn:24050'
+url = 'http://localhost:5001'
 
 
-def short_data():
+def short_data(longitude=120, latitude=30):
     return datetime.utcnow().isoformat("T") + "Z" + \
-             ',1.0,1.0,0.1,120,30,\n'
+             f',1.0,1.0,0.1,{longitude},{latitude},\n'
 
 
 long_data = ''
 for i in range(records_num):
-    long_data += short_data()
+    long_data += short_data(120+0.01*i, 30+0.01*i)
 
 json_body = {
     "UserID": 1,
-    "LaunchTimestamp": datetime.utcnow().isoformat("T") + "Z",
+    "LaunchTimestamp": datetime.utcnow().isoformat(" "),
     "Data": long_data
 }
 # register
