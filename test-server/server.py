@@ -226,7 +226,7 @@ def data_post():
         if len(longitude_list) == len(latitude_list) and \
            len(longitude_list) > 0:
             for i in range(len(longitude_list)):
-                points.append([latitude_list[i], longitude_list[i]])
+                points.append([longitude_list[i], latitude_list[i]])
         else:
             print('length of longitude and latitude '
                   'are not the same')
