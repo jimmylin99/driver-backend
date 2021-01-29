@@ -11,12 +11,12 @@ from datetime import date, datetime
 
 records_num = 20
 # url = 'http://server.acemap.cn:24050'
-url = 'http://localhost:5001'
+url = 'http://localhost'
 
 
 def short_data(longitude=120, latitude=30):
     return datetime.utcnow().isoformat("T") + "Z" + \
-             f',1.0,1.0,0.1,{longitude},{latitude},\n'
+             f',1.0,1.0,0.1,{latitude},{longitude},\n'
 
 
 long_data = ''
