@@ -11,7 +11,7 @@ from datetime import date, datetime
 
 records_num = 20
 # url = 'http://server.acemap.cn:24050'
-url = 'http://localhost'
+url = 'http://localhost:5000'
 
 
 def short_data(longitude=120, latitude=30):
@@ -21,7 +21,7 @@ def short_data(longitude=120, latitude=30):
 
 long_data = ''
 for i in range(records_num):
-    long_data += short_data(120+0.01*i, 30+0.01*i)
+    long_data += short_data(121+0.01*i, 31+0.01*i)
 
 json_body = {
     "UserID": 1,

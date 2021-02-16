@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, make_response, render_template
 from influxdb import InfluxDBClient
 from werkzeug.security import generate_password_hash, check_password_hash
-import uuid 
 import jwt
 import json
 from datetime import datetime, timedelta
@@ -218,6 +217,8 @@ def replay():
 @app.route('/points/chendy/0_th_recent', methods=['GET'])
 def data_post():
     from minor import get_track_longitude_latitude
+    from utils.transCoordinate import LngLatTransfer
+    transCoord = LngLatTransfer()
     status, longitude_list, latitude_list = get_track_longitude_latitude(
         client, 0
     )
@@ -226,7 +227,10 @@ def data_post():
         if len(longitude_list) == len(latitude_list) and \
            len(longitude_list) > 0:
             for i in range(len(longitude_list)):
-                points.append([longitude_list[i], latitude_list[i]])
+                lng = longitude_list[i]
+                lat = latitude_list[i]
+                lat, lng = transCoord.WGS84_to_GCJ02(lng, lat)
+                points.append([lng, lat])
         else:
             print('length of longitude and latitude '
                   'are not the same')
@@ -247,9 +251,9 @@ def data_post():
     })
 
 
-if  __name__ == '__main__': 
-    from werkzeug.middleware.proxy_fix import ProxyFix
-    app.wsgi_app = ProxyFix(app.wsgi_app)
-    
-    # app.run(debug=True) 
-    app.run(host='0.0.0.0', port=5001, debug=True)
+# if  __name__ == '__main__': 
+#     from werkzeug.middleware.proxy_fix import ProxyFix
+#     app.wsgi_app = ProxyFix(app.wsgi_app)
+
+#     # app.run(debug=True) 
+#     app.run(host='0.0.0.0', port=5001, debug=True)
