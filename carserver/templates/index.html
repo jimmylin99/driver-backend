@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>轨迹回放</title>
+    <link rel="stylesheet" href="http://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html, body, #container {
+            height: 100%;
+            width: 100%;
+        }
+
+        .login-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+            width: 22rem;
+            border-width: 0;
+            border-radius: 0.4rem;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: fixed;
+            top: 1rem;
+            right: 50%;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .input-card .btn{
+            margin-right: 1.2rem;
+            width: 9rem;
+        }
+
+        .input-card .btn:last-child{
+            margin-right: 0;
+        }
+        .content-window-card {
+            position: relative;
+            box-shadow: none;
+            bottom: 0;
+            left: 0;
+            width: auto;
+            padding: 0;
+        }
+
+        .content-window-card p {
+            height: 2rem;
+        }
+
+        .custom-info {
+            border: none;
+        }
+
+        .btn {
+            margin-top: 5px;
+        }
+
+        div.info-top {
+            position: relative;
+            background: none repeat scroll 0 0 #edfaa2;
+            /* border-bottom: 1px solid #CCC; */
+            border-radius: 5px 5px 0 0;
+        }
+
+        div.info-top div {
+            display: inline-block;
+            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 31px;
+            padding: 0 10px;
+        }
+
+        div.info-top .float-right {
+            float: right;
+        }
+
+        div.info-top img {
+            position: relative;
+            transition-duration: 0.25s;
+        }
+
+        div.info-top img:hover {
+            box-shadow: 0px 0px 5px #000;
+        }
+
+        div.info-middle {
+            font-size: 12px;
+            padding: 10px 0px 10px 10px;
+            line-height: 20px;
+        }
+
+        div.info-bottom {
+            height: 0px;
+            width: 100%;
+            clear: both;
+            text-align: center;
+        }
+
+        div.info-bottom img {
+            position: relative;
+            z-index: 104;
+        }
+
+        span {
+            margin-left: 5px;
+            font-size: 11px;
+        }
+
+        .info-middle img {
+            float: left;
+            margin-right: 6px;
+        }
+        #debug-log {
+            display: flex;
+            margin-left: 1.2rem;
+            width: 50%;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.15&key=d04a5ee3199f178458ff4f120ec18f6a"></script>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='amap.js') }}"></script>
+</body>
+</html>
