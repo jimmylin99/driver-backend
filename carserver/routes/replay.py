@@ -19,19 +19,20 @@ def data_post():
     time_list, unique_tag_info = get_track_longitude_latitude(
         client, 0
     )
+    # package lng & lat into an array `points`
     points = []
     if status == 'OK':
         if len(longitude_list) == len(latitude_list) and \
-           len(longitude_list) > 0:
-            for i in range(len(longitude_list)):
-                lng = longitude_list[i]
-                lat = latitude_list[i]
-                lat, lng = transCoord.WGS84_to_GCJ02(lng, lat)
-                time = time_list[i]
-                points.append([lng, lat, time])
+            len(time_list) == len(longitude_list) and \
+            len(longitude_list) > 0:
+                for i in range(len(longitude_list)):
+                    lng = longitude_list[i]
+                    lat = latitude_list[i]
+                    lat, lng = transCoord.WGS84_to_GCJ02(lng, lat)
+                    points.append([lng, lat])
         else:
-            print('length of longitude and latitude '
-                  'are not the same')
+            print('one of the length of longitude, latitude and time '
+                  'is not identical')
     else:
         print(status)
     
@@ -50,5 +51,6 @@ def data_post():
     
     return jsonify({
         'points': points,
-        'tag_info': unique_tag_info
+        'time': time_list,
+        'tag-info': unique_tag_info
     })

@@ -38,16 +38,21 @@ def rapid_acc():
         try:
             # positioning each column requires complete tag info and time info
             update_data(client, "data", tag_info, time, updated_fields, keep=True)
+            print(f'rapid-acc labeled for tag = {tag_info} '
+                  f'& time = {time}'
+            )
 
-        except Exception as E:
-            print('error occured within update_data')
-            raise Exception from E
+        except Exception as e:
+            print('error occured within update_data: ')
+            print(e)
+            raise Exception from e
 
         return jsonify({
             "message": "received"
         }), 200
 
-    except:
+    except Exception as e:
+        print(e)
         print('rapid-acc error occured')
 
         return jsonify({

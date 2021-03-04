@@ -3,6 +3,8 @@ from influxdb import InfluxDBClient
 
 def get_track_longitude_latitude(client, ith_recent):
     """
+    IMPORTANT: tag should be unique among all returned points!
+    this is the key assumption
     @return: 
         str: status code, 
         list: longitude_list,
@@ -29,7 +31,9 @@ def get_track_longitude_latitude(client, ith_recent):
         return 'index error', None, None
 
     # get all fields and tags satisfying given launch tag
-    query_statement = f"select * from data where launch='{launch_tag}' group by launch"
+    # MOD: no tailing `group by launch` so that launch tag is also listed in results
+    # TODO: make sure this works (it should work)
+    query_statement = f"select * from data where launch='{launch_tag}' group by *"
     print(query_statement, end='\n\n')
     results = client.query(query_statement)
     gen = results.get_points()
@@ -50,9 +54,13 @@ def get_track_longitude_latitude(client, ith_recent):
         latitude_list.append(_latitude)
         time_list.append(_time)
 
-    unique_tag_info = {
-        "tag1": "value1"
-    } # TODO: get unique tag info
+    # IMPORTANT: as mentioned at the beginning,
+    # tag should be unique among all returned points!
+    # this is the key assumption
+    keys = results.keys()
+    assert len(keys) > 0
+    assert len(keys[0]) == 2
+    unique_tag_info = keys[0][1]
     
     return 'OK', longitude_list, latitude_list, time_list, unique_tag_info
 
@@ -60,10 +68,14 @@ if __name__ == '__main__':
     database_name = 'DriveS'
     client = InfluxDBClient('localhost', 8086, 'root', 'root', database_name)
     ith_recent = 0
-    status, longitude_list, latitude_list = get_track_longitude_latitude(
-        client, ith_recent
+    status, longitude_list, latitude_list, \
+        time_list, unique_tag_info = get_track_longitude_latitude(
+            client, ith_recent
     )
     if status == 'OK':
-        print(longitude_list, latitude_list)
+        # print(longitude_list, latitude_list)
+        print('success')
+        print(f'len = {len(longitude_list)}')
+        print(f'tag info = {unique_tag_info}')
     else:
         print(status)

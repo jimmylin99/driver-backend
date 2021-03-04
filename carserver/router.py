@@ -49,6 +49,7 @@ Body:
 from carserver.routes import login
 from carserver.routes import motiondata
 from carserver.routes import replay
+from carserver.routes import label
 # from carserver.routes import label
 
 # if  __name__ == '__main__': 

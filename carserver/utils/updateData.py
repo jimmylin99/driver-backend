@@ -30,12 +30,12 @@ def update_data(client: InfluxDBClient, measurement: str, tag_info: dict,
     for key, value in tag_info.items():
         sql_query = sql_query + f" and {key}='{value}'"
     
-    print(f"sql_query = {sql_query}")
+    # print(f"sql_query = {sql_query}")
 
     results = client.query(sql_query)
-    print(f"results: {results}")
+    # print(f"results: {results}")
     points = results.get_points()
-    print(f"points: {points}")
+    # print(f"points: {points}")
     size = 0
     for _point in points:
         size += 1
@@ -44,7 +44,7 @@ def update_data(client: InfluxDBClient, measurement: str, tag_info: dict,
     if size == 0:
         print("sql query returns empty result set")
         raise Exception
-    print(f"point = {point}")
+    # print(f"point = {point}")
 
     ''' update point
         point sample:
@@ -82,7 +82,7 @@ def update_data(client: InfluxDBClient, measurement: str, tag_info: dict,
     body = [
         updated_point
     ]
-    print(body)
+    # print(body)
 
     client.write_points(body)
 

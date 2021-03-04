@@ -18,18 +18,17 @@ function equar(a, b) {
 function randomNum(minNum,maxNum){ 
     switch(arguments.length){ 
         case 1: 
-            return parseInt(Math.random()*minNum+1,10); 
-        break; 
+            return parseInt(Math.random()*minNum+1,10);  
         case 2: 
             return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
-        break; 
             default: 
                 return 0; 
-            break; 
     } 
 } 
 // utils end
-var inner_data
+var lineArr
+var timeArr
+var tag_info
 var randomIndex;
 $.ajax({
     url: "/points/chendy/0_th_recent",
@@ -37,9 +36,10 @@ $.ajax({
     dataType: 'json',
     async: false,
     success: function (data) {
-        console.log(data)
-        console.log(data['points'])
-        inner_data = data['points']
+        lineArr = data['points']
+        timeArr = data['time']
+        tag_info = data['tag-info']
+        // console.log(JSON.stringify(tag_info))
         // inner_data = [
         //     [121.43486897291308,31.030860772000423], 
         //     [121.43486897291308,31.030860772000423], 
@@ -57,9 +57,8 @@ $.ajax({
 })
 
 // var lineArr = inner_data['points']
-var lineArr = inner_data
 // var lineArr = [[116.478935,39.997761],[116.478939,39.997825],[116.478912,39.998549],[116.478912,39.998549],[116.478998,39.998555],[116.478998,39.998555],[116.479282,39.99856],[116.479658,39.998528],[116.480151,39.998453],[116.48367,39.998968],[116.484648,39.999861]];
-console.log(lineArr)
+// console.log(lineArr)
 var map = new AMap.Map("container", {
     resizeEnable: true,
     // center: [1.0, 1.0],
@@ -92,7 +91,7 @@ content.push(`
 var infoWindow = new AMap.InfoWindow({
     isCustom: true,  //使用自定义窗体
     content: createInfoWindow(title, content.join("<br/>")),
-    offset: new AMap.Pixel(16, 0)
+    offset: new AMap.Pixel(16, -45)
 })
 
 addMarker()
@@ -100,20 +99,22 @@ addMarker()
 map.setFitView();
 
 $("div#container").on("click", "#btn-rapid-acc", function() {
-    console.log("bind succeed btn-rapid-acc");
+    // console.log("bind succeed btn-rapid-acc");
+    // console.log(lineArr[randomIndex])
     $.ajax({
         url: "/label/rapid-acc", 
         type: 'POST',
         data: `{
             "status": "OK",
-            "lng": ${lineArr[randomIndex][0]},
-            "lat": ${lineArr[randomIndex][1]},
-            "user": "chendy",
-            "i-th-track": 0 
+            "tag_info": ${JSON.stringify(tag_info)},
+            "time": ${JSON.stringify(timeArr[randomIndex])},
+            "updated_fields": {
+                "rapid-acc": 1
+            }
         }`,
         dataType: 'json',
         beforeSend: (request) => {
-            console.log("before send rapid-acc");
+            // console.log("before send rapid-acc");
         },
         success: function(result) {
             console.log(result);
@@ -122,7 +123,7 @@ $("div#container").on("click", "#btn-rapid-acc", function() {
         error: function(result) {
             console.log(result);
             console.log("error occured rapid-acc");
-            console.log(data);
+            console.log(this.data);
         }
     })
 })
