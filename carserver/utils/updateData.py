@@ -1,6 +1,6 @@
 '''
     Update point (data) given its unique identifiers: tag & time,
-    as well as its updated fields.
+    as well as its updated field(s). [support multiple fields]
     By default (keep=True), all old fields will be kept, and new fields
     mentioned in argument `fields` will overlay them if any;
     if keep is set to false, then no old field will be kept, and the fields

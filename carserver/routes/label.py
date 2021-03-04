@@ -3,7 +3,7 @@ from flask.json import jsonify
 from carserver import app, client
 from carserver.utils.updateData import update_data
 
-@app.route('/label/rapid-acc', methods=['POST'])
+@app.route('/label/update', methods=['POST'])
 def rapid_acc():
     '''
         json body sample:
@@ -18,7 +18,7 @@ def rapid_acc():
                 "rapid-acc": 1
             }
     '''
-    print('rapid-acc received')
+    print('signal received for updating label(s)')
     try:
         data = json.loads(request.get_data(as_text=True))
         status = data.get("status", "")
@@ -27,18 +27,20 @@ def rapid_acc():
         updated_fields = data.get("updated_fields", "")
 
         if "" in [status, tag_info, time, updated_fields]:
-            print("json body from rapid-acc has empty value for at least one required field")
+            print("json body from `update label` has empty value for at least one required field")
             raise Exception
 
         rapid_acc = updated_fields.get("rapid-acc", "")
-        if "" == rapid_acc:
-            print("did not detect field: rapid-acc within updated fields")
+        rapid_brake = updated_fields.get("rapid-brake", "")
+        normal = updated_fields.get("normal", "")
+        if rapid_acc == "" and rapid_brake == "" and normal == "":
+            print("did not detect any required field: rapid-acc, rapid-brake or normal")
             raise Exception
 
         try:
             # positioning each column requires complete tag info and time info
             update_data(client, "data", tag_info, time, updated_fields, keep=True)
-            print(f'rapid-acc labeled for tag = {tag_info} '
+            print(f'fields {updated_fields} labeled for tag = {tag_info} '
                   f'& time = {time}'
             )
 
@@ -53,7 +55,7 @@ def rapid_acc():
 
     except Exception as e:
         print(e)
-        print('rapid-acc error occured')
+        print('error occured for update label(s)')
 
         return jsonify({
             "message": "error"

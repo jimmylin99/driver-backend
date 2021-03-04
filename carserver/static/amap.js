@@ -102,7 +102,7 @@ $("div#container").on("click", "#btn-rapid-acc", function() {
     // console.log("bind succeed btn-rapid-acc");
     // console.log(lineArr[randomIndex])
     $.ajax({
-        url: "/label/rapid-acc", 
+        url: "/label/update", 
         type: 'POST',
         data: `{
             "status": "OK",
@@ -123,6 +123,62 @@ $("div#container").on("click", "#btn-rapid-acc", function() {
         error: function(result) {
             console.log(result);
             console.log("error occured rapid-acc");
+            console.log(this.data);
+        }
+    })
+})
+
+$("div#container").on("click", "#btn-rapid-brake", function() {
+    $.ajax({
+        url: "/label/update", 
+        type: 'POST',
+        data: `{
+            "status": "OK",
+            "tag_info": ${JSON.stringify(tag_info)},
+            "time": ${JSON.stringify(timeArr[randomIndex])},
+            "updated_fields": {
+                "rapid-brake": 1
+            }
+        }`,
+        dataType: 'json',
+        beforeSend: (request) => {
+            // console.log("before send rapid-acc");
+        },
+        success: function(result) {
+            console.log(result);
+            console.log("success rapid-brake");
+        },
+        error: function(result) {
+            console.log(result);
+            console.log("error occured rapid-brake");
+            console.log(this.data);
+        }
+    })
+})
+
+$("div#container").on("click", "#btn-normal", function() {
+    $.ajax({
+        url: "/label/update", 
+        type: 'POST',
+        data: `{
+            "status": "OK",
+            "tag_info": ${JSON.stringify(tag_info)},
+            "time": ${JSON.stringify(timeArr[randomIndex])},
+            "updated_fields": {
+                "normal": 1
+            }
+        }`,
+        dataType: 'json',
+        beforeSend: (request) => {
+            // console.log("before send rapid-acc");
+        },
+        success: function(result) {
+            console.log(result);
+            console.log("success normal");
+        },
+        error: function(result) {
+            console.log(result);
+            console.log("error occured normal");
             console.log(this.data);
         }
     })
