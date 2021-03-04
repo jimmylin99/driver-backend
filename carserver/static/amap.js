@@ -94,6 +94,7 @@ var infoWindow = new AMap.InfoWindow({
     offset: new AMap.Pixel(16, -45)
 })
 
+var randomMarker;
 addMarker()
 
 map.setFitView();
@@ -187,7 +188,7 @@ $("div#container").on("click", "#btn-normal", function() {
 
 function addMarker() {
     randomIndex = randomNum(0, lineArr.length-1);
-    var randomMarker = new AMap.Marker({
+    randomMarker = new AMap.Marker({
         map: map,
         position: lineArr[randomIndex]
     });
@@ -243,3 +244,14 @@ function createInfoWindow(title, content) {
 function closeInfoWindow() {
     map.clearInfoWindow();
 }
+
+$("#refresh-label").click((ev) => {
+    if (randomMarker) {
+        randomMarker.setMap(null);
+        randomMarker = null;
+
+        closeInfoWindow();
+    }
+    addMarker();
+    map.setFitView();
+})

@@ -128,10 +128,20 @@
             background-clip: border-box;
             border-radius: .25rem;
         }
+        .update-label-card {
+            width: 10rem;
+        }
     </style>
 </head>
 <body>
 <div id="container"></div>
+
+<div class="input-card update-label-card">
+    <label style="color:grey">标记更新操作</label>
+    <div class="input-item">
+        <input id="refresh-label" type="button" class="btn" value="下一个标记"/>
+    </div>
+</div>
 
 <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.15&key=d04a5ee3199f178458ff4f120ec18f6a"></script>
 <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
