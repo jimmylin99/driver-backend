@@ -5,6 +5,101 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>轨迹回放</title>
+    <style>
+        .loader {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999;
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+        }
+
+        .loader-line-wrap {
+            animation: 
+            spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite
+        ;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px;
+        }
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+        }
+        .loader-line-wrap:nth-child(1) { animation-delay: -50ms; }
+        .loader-line-wrap:nth-child(2) { animation-delay: -100ms; }
+        .loader-line-wrap:nth-child(3) { animation-delay: -150ms; }
+        .loader-line-wrap:nth-child(4) { animation-delay: -200ms; }
+        .loader-line-wrap:nth-child(5) { animation-delay: -250ms; }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: hsl(0, 80%, 60%);
+            height: 90px;
+            width: 90px;
+            top: 7px;
+        }
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: hsl(60, 80%, 60%);
+            height: 76px;
+            width: 76px;
+            top: 14px;
+        }
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: hsl(120, 80%, 60%);
+            height: 62px;
+            width: 62px;
+            top: 21px;
+        }
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: hsl(180, 80%, 60%);
+            height: 48px;
+            width: 48px;
+            top: 28px;
+        }
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: hsl(240, 80%, 60%);
+            height: 34px;
+            width: 34px;
+            top: 35px;
+        }
+
+        @keyframes spin {
+            0%, 15% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
     <link rel="stylesheet" href="http://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
     <style>
         html, body, #container {
@@ -131,15 +226,75 @@
         .update-label-card {
             width: 10rem;
         }
+        .nav-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+            width: 22rem;
+            border-width: 0;
+            border-radius: 0.4rem;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+        .nav-card input {
+            margin-left: 1rem;
+        }
     </style>
 </head>
 <body>
+<div class="loader" id="loader">
+    <div class="loader-inner">
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+    </div>
+</div>
+
 <div id="container"></div>
 
-<div class="input-card update-label-card">
+<div class="input-card update-label-card" style="visibility: hidden;">
     <label style="color:grey">标记更新操作</label>
     <div class="input-item">
         <input id="refresh-label" type="button" class="btn" value="下一个标记"/>
+    </div>
+</div>
+
+<div class="nav-card update-label-card" style="visibility: hidden;">
+    <label style="color:grey">选择行程轨迹</label>
+    <div class="input-item">
+        <label for="username-track-query">用户名</label>
+        <input id="username-track-query" type="text" value="chendy"/>
+    </div>
+    <div class="input-item">
+        <label for="i-th-track-query">行程编号</label>
+        <input id="i-th-track-query" type="number" value=0 />
+    </div>
+    <div class="input-item">
+        <p>行程编号注释：0表示最近一次，1表示倒数第二次，以此类推</p>
+    </div>
+    <div class="input-item">
+        <input id="submit-track-query" type="button" class="btn" value="提交"/>
     </div>
 </div>
 

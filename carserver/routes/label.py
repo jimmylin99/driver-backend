@@ -33,9 +33,11 @@ def rapid_acc():
         rapid_acc = updated_fields.get("rapid-acc", "")
         rapid_brake = updated_fields.get("rapid-brake", "")
         normal = updated_fields.get("normal", "")
-        if rapid_acc == "" and rapid_brake == "" and normal == "":
-            print("did not detect any required field: rapid-acc, rapid-brake or normal")
-            raise Exception
+        bad_point = updated_fields.get("bad-point", "")
+        if rapid_acc == "" and rapid_brake == "" \
+            and normal == "" and bad_point == "":
+                print("did not detect any required field: rapid-acc, rapid-brake, normal or bad-point")
+                raise Exception
 
         try:
             # positioning each column requires complete tag info and time info

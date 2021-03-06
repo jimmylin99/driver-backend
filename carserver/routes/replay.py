@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, make_response
 import json
 
 from flask.json import jsonify
@@ -10,14 +10,14 @@ def replay():
     return render_template('index.html')
 
 
-@app.route('/points/chendy/0_th_recent', methods=['GET'])
-def data_post():
+@app.route('/points/<string:username>/<int:trackid>', methods=['GET'])
+def data_post(username, trackid):
     from carserver.utils.getlnglat import get_track_longitude_latitude
     from carserver.utils.transCoordinate import LngLatTransfer
     transCoord = LngLatTransfer()
     status, longitude_list, latitude_list, \
     time_list, unique_tag_info = get_track_longitude_latitude(
-        client, 0
+        client, username, trackid
     )
     # package lng & lat into an array `points`
     points = []
@@ -30,11 +30,23 @@ def data_post():
                     lat = latitude_list[i]
                     lat, lng = transCoord.WGS84_to_GCJ02(lng, lat)
                     points.append([lng, lat])
+                
+                return make_response(
+                    jsonify({
+                        'points': points,
+                        'time': time_list,
+                        'tag-info': unique_tag_info
+                    }),
+                    200
+                )
         else:
             print('one of the length of longitude, latitude and time '
                   'is not identical')
+            return make_response('one of the length of longitude, latitude and time '
+                  'is not identical', 400)
     else:
         print(status)
+        return make_response({'message': status}, 400)
     
     # return jsonify(  # content-type is "application/json"
     #     {'message': [
@@ -48,9 +60,3 @@ def data_post():
     # return json.dumps({  # content-type is "text/html; charset=utf-8"
     #     'points': points
     # })
-    
-    return jsonify({
-        'points': points,
-        'time': time_list,
-        'tag-info': unique_tag_info
-    })
