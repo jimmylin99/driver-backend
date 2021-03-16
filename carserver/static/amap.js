@@ -3,6 +3,7 @@
 var lineArr;
 var timeArr;
 var tag_info;
+var fastTurns;
 var randomIndex;
 var map;
 var polyline;
@@ -31,6 +32,9 @@ $("#submit-track-query").click((ev) => {
             lineArr = data['points'];
             timeArr = data['time'];
             tag_info = data['tag-info'];
+            console.log(data);
+            fastTurns = data['algo']['fast-turn'];
+            console.log(fastTurns);
 
             // var lineArr = inner_data['points']
             // var lineArr = [[116.478935,39.997761],[116.478939,39.997825],[116.478912,39.998549],[116.478912,39.998549],[116.478998,39.998555],[116.478998,39.998555],[116.479282,39.99856],[116.479658,39.998528],[116.480151,39.998453],[116.48367,39.998968],[116.484648,39.999861]];
@@ -45,15 +49,29 @@ $("#submit-track-query").click((ev) => {
             });
 
             // 绘制轨迹
-            polyline = new AMap.Polyline({
-                map: map,
-                path: lineArr,
-                showDir:true,
-                strokeColor: "#F8F",  //线颜色
-                // strokeOpacity: 1,     //线透明度
-                strokeWeight: 6,      //线宽
-                // strokeStyle: "solid"  //线样式
-            });
+            let cur = 0, i = 0;
+            fastTurns.push(1-fastTurns[fastTurns.length-1]) // final opposite sentry
+            while (i <= lineArr.length) {
+                if (fastTurns[i] != fastTurns[cur]) {
+                    let color;
+                    if (fastTurns[cur] == 0)
+                        color = "#3BE"
+                    else
+                        color = "#E33"
+                    new AMap.Polyline({
+                        map: map,
+                        path: lineArr.slice(cur, i),
+                        showDir:true,
+                        strokeColor: color,  //线颜色 light blue
+                        // strokeOpacity: 1,     //线透明度
+                        strokeWeight: 6,      //线宽
+                        // strokeStyle: "solid"  //线样式
+                    });
+
+                    cur = i
+                }
+                i++
+            }
 
             //实例化信息窗体
             var title = '请选择此处驾驶情况';

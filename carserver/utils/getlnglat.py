@@ -9,6 +9,9 @@ def get_track_longitude_latitude(client, username, ith_recent):
         str: status code, 
         list: longitude_list,
         list: latitude_list,
+        list: acc_list,
+        list: gyr_list,
+        list: speed_list,
         list: time_list,
         dict: unique_tag_info
     """
@@ -76,18 +79,27 @@ def get_track_longitude_latitude(client, username, ith_recent):
     list = []
     longitude_list = [] # E'121
     latitude_list = [] # N'30
+    acc_list = []
+    gyr_list = []
+    speed_list = []
     time_list = []
     for kv in gen:
         _longitude = kv.get('longitude', '')
         _latitude = kv.get('latitude', '')
+        _acc = kv.get('acceleration', '')
+        _gyr = kv.get('gyroscope', '')
+        _speed = kv.get('velocity', '')
         _time = kv.get('time', '')
-        if '' in [_longitude, _latitude, _time]:
-            return 'one or more of the points lack(s) longitude or latitude or time data', None, None
+        if '' in [_longitude, _latitude, _acc, _gyr, _speed, _time]:
+            return 'one or more of the points lack(s) longitude or latitude or time or other data', None, None
         if 0 in [_longitude, _latitude]:
             continue
         list.append(kv)
         longitude_list.append(_longitude)
         latitude_list.append(_latitude)
+        acc_list.append(_acc)
+        gyr_list.append(_gyr)
+        speed_list.append(_speed)
         time_list.append(_time)
 
     # IMPORTANT: as mentioned at the beginning,
@@ -98,7 +110,9 @@ def get_track_longitude_latitude(client, username, ith_recent):
     assert len(keys[0]) == 2
     unique_tag_info = keys[0][1]
     
-    return 'OK', longitude_list, latitude_list, time_list, unique_tag_info
+    return 'OK', longitude_list, latitude_list, \
+        acc_list, gyr_list, speed_list, \
+        time_list, unique_tag_info
 
 if __name__ == '__main__':
     database_name = 'DriveS'

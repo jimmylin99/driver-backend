@@ -16,11 +16,18 @@ def data_post(username, trackid):
     from carserver.utils.transCoordinate import LngLatTransfer
     transCoord = LngLatTransfer()
     status, longitude_list, latitude_list, \
-    time_list, unique_tag_info = get_track_longitude_latitude(
-        client, username, trackid
+        acc_list, gyr_list, speed_list, \
+        time_list, unique_tag_info = get_track_longitude_latitude(
+            client, username, trackid
     )
-    # package lng & lat into an array `points`
+    from carserver.algo.detectionWrapper import getFastTurnIndicator
+    algoIsFastTurn = getFastTurnIndicator(acc_list, gyr_list, speed_list)
+    # algoIsFastTurn = [0] * len(acc_list)
+    # for i in range(len(acc_list)//3, len(acc_list)//3*2):
+    #     algoIsFastTurn[i] = 1
     points = []
+    # package lng & lat into an array `points`
+    # also package fastTurn indicator
     if status == 'OK':
         if len(longitude_list) == len(latitude_list) and \
             len(time_list) == len(longitude_list) and \
@@ -30,12 +37,16 @@ def data_post(username, trackid):
                     lat = latitude_list[i]
                     lat, lng = transCoord.WGS84_to_GCJ02(lng, lat)
                     points.append([lng, lat])
+                    
                 
                 return make_response(
                     jsonify({
                         'points': points,
                         'time': time_list,
-                        'tag-info': unique_tag_info
+                        'tag-info': unique_tag_info,
+                        'algo': {
+                            'fast-turn': algoIsFastTurn
+                        }
                     }),
                     200
                 )
