@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     import sys
     sys.path.append('../..')
-from carserver.algo.detection import Detection
+from .safesjtu_algo.detection import Detection
 
 def getFastTurnIndicator(acc_list, gyr_list, speed_list):
     '''

@@ -1,0 +1,3 @@
+[submodule "carserver/algo/safesjtu_algo"]
+	path = carserver/algo/safesjtu_algo
+	url = https://github.com/dychen24/safesjtu-algo.git
