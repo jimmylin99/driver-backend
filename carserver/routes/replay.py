@@ -10,6 +10,11 @@ def replay():
     return render_template('index.html')
 
 
+@app.route('/algo-test')
+def algo_test():
+    return render_template('algo_test.html')
+
+
 @app.route('/points/<string:username>/<int:trackid>', methods=['GET'])
 def data_post(username, trackid):
     from carserver.utils.getlnglat import get_track_longitude_latitude

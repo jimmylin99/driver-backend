@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>轨迹回放</title>
+    <style>
+        .loader {
+            background: #000;
+            background: radial-gradient(#222, #000);
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 99999;
+        }
+
+        .loader-inner {
+            bottom: 0;
+            height: 60px;
+            left: 0;
+            margin: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+        }
+
+        .loader-line-wrap {
+            animation: 
+            spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite
+        ;
+            box-sizing: border-box;
+            height: 50px;
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            transform-origin: 50% 100%;
+            width: 100px;
+        }
+        .loader-line {
+            border: 4px solid transparent;
+            border-radius: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+        }
+        .loader-line-wrap:nth-child(1) { animation-delay: -50ms; }
+        .loader-line-wrap:nth-child(2) { animation-delay: -100ms; }
+        .loader-line-wrap:nth-child(3) { animation-delay: -150ms; }
+        .loader-line-wrap:nth-child(4) { animation-delay: -200ms; }
+        .loader-line-wrap:nth-child(5) { animation-delay: -250ms; }
+
+        .loader-line-wrap:nth-child(1) .loader-line {
+            border-color: hsl(0, 80%, 60%);
+            height: 90px;
+            width: 90px;
+            top: 7px;
+        }
+        .loader-line-wrap:nth-child(2) .loader-line {
+            border-color: hsl(60, 80%, 60%);
+            height: 76px;
+            width: 76px;
+            top: 14px;
+        }
+        .loader-line-wrap:nth-child(3) .loader-line {
+            border-color: hsl(120, 80%, 60%);
+            height: 62px;
+            width: 62px;
+            top: 21px;
+        }
+        .loader-line-wrap:nth-child(4) .loader-line {
+            border-color: hsl(180, 80%, 60%);
+            height: 48px;
+            width: 48px;
+            top: 28px;
+        }
+        .loader-line-wrap:nth-child(5) .loader-line {
+            border-color: hsl(240, 80%, 60%);
+            height: 34px;
+            width: 34px;
+            top: 35px;
+        }
+
+        @keyframes spin {
+            0%, 15% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html, body, #container {
+            height: 100%;
+            width: 100%;
+        }
+
+        .login-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+            width: 22rem;
+            border-width: 0;
+            border-radius: 0.4rem;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: fixed;
+            top: 1rem;
+            right: 50%;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .input-card .btn{
+            margin-right: 1.2rem;
+            width: 9rem;
+        }
+
+        .input-card .btn:last-child{
+            margin-right: 0;
+        }
+        .content-window-card {
+            position: relative;
+            box-shadow: none;
+            bottom: 0;
+            left: 0;
+            width: auto;
+            padding: 0;
+        }
+
+        .content-window-card p {
+            height: 2rem;
+        }
+
+        .custom-info {
+            border: none;
+        }
+
+        .btn {
+            margin-top: 5px;
+        }
+
+        div.info-top {
+            position: relative;
+            background: none repeat scroll 0 0 #edfaa2;
+            /* border-bottom: 1px solid #CCC; */
+            border-radius: 5px 5px 0 0;
+        }
+
+        div.info-top div {
+            display: inline-block;
+            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 31px;
+            padding: 0 10px;
+        }
+
+        div.info-top .float-right {
+            float: right;
+        }
+
+        div.info-top img {
+            position: relative;
+            transition-duration: 0.25s;
+        }
+
+        div.info-top img:hover {
+            box-shadow: 0px 0px 5px #000;
+        }
+
+        div.info-middle {
+            font-size: 12px;
+            padding: 10px 0px 10px 10px;
+            line-height: 20px;
+        }
+
+        div.info-bottom {
+            height: 0px;
+            width: 100%;
+            clear: both;
+            text-align: center;
+        }
+
+        div.info-bottom img {
+            position: relative;
+            z-index: 104;
+        }
+
+        span {
+            margin-left: 5px;
+            font-size: 11px;
+        }
+
+        .info-middle img {
+            float: left;
+            margin-right: 6px;
+        }
+        #debug-log {
+            display: flex;
+            margin-left: 1.2rem;
+            width: 50%;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+        }
+        .update-label-card {
+            width: 10rem;
+        }
+        .nav-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+            width: 22rem;
+            border-width: 0;
+            border-radius: 0.4rem;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+        .nav-card input {
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="loader" id="loader">
+    <div class="loader-inner">
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+        <div class="loader-line"></div>
+        </div>
+    </div>
+</div>
+
+<div id="container"></div>
+
+<div class="nav-card update-label-card" style="visibility: hidden;">
+    <label style="color:grey">选择行程轨迹</label>
+    <div class="input-item">
+        <label for="username-track-query">用户名</label>
+        <input id="username-track-query" type="text" value="chendy"/>
+    </div>
+    <div class="input-item">
+        <label for="i-th-track-query">行程编号</label>
+        <input id="i-th-track-query" type="number" value=0 />
+    </div>
+    <div class="input-item">
+        <p>行程编号注释：0表示最近一次，1表示倒数第二次，以此类推</p>
+    </div>
+    <div class="input-item">
+        <input id="submit-track-query" type="button" class="btn" value="提交"/>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=d04a5ee3199f178458ff4f120ec18f6a"></script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='amap_algo_test.js') }}"></script>
+</body>
+</html>
