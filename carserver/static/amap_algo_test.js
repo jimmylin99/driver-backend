@@ -3,7 +3,7 @@
 var lineArr;
 var timeArr;
 var tag_info;
-var fastTurns;
+var ROIs;
 var randomIndex;
 var map;
 var polyline;
@@ -30,8 +30,8 @@ $("#submit-track-query").click((ev) => {
             timeArr = data['time'];
             tag_info = data['tag-info'];
             console.log(data);
-            fastTurns = data['algo']['fast-turn'];
-            console.log(fastTurns);
+            ROIs = data['algo']['ROI'];
+            console.log(ROIs);
 
             // var lineArr = inner_data['points']
             // var lineArr = [[116.478935,39.997761],[116.478939,39.997825],[116.478912,39.998549],[116.478912,39.998549],[116.478998,39.998555],[116.478998,39.998555],[116.479282,39.99856],[116.479658,39.998528],[116.480151,39.998453],[116.48367,39.998968],[116.484648,39.999861]];
@@ -47,11 +47,11 @@ $("#submit-track-query").click((ev) => {
 
             // 绘制轨迹
             let cur = 0, i = 0;
-            fastTurns.push(1-fastTurns[fastTurns.length-1]) // final opposite sentry
+            ROIs.push(1-ROIs[ROIs.length-1]) // final opposite sentry
             while (i <= lineArr.length) {
-                if (fastTurns[i] != fastTurns[cur]) {
+                if (ROIs[i] != ROIs[cur]) {
                     let color;
-                    if (fastTurns[cur] == 0)
+                    if (ROIs[cur] == 0)
                         color = "#3BE"
                     else
                         color = "#E33"

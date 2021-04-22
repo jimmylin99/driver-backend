@@ -25,8 +25,8 @@ def data_post(username, trackid):
         time_list, unique_tag_info = get_track_longitude_latitude(
             client, username, trackid
     )
-    from carserver.algo.detectionWrapper import getFastTurnIndicator
-    algoIsFastTurn = getFastTurnIndicator(acc_list, gyr_list, speed_list)
+    from carserver.algo.detectionWrapper import getROIIndicator
+    algoIsROI = getROIIndicator(acc_list, gyr_list, speed_list)
     # algoIsFastTurn = [0] * len(acc_list)
     # for i in range(len(acc_list)//3, len(acc_list)//3*2):
     #     algoIsFastTurn[i] = 1
@@ -50,7 +50,7 @@ def data_post(username, trackid):
                         'time': time_list,
                         'tag-info': unique_tag_info,
                         'algo': {
-                            'fast-turn': algoIsFastTurn
+                            'ROI': algoIsROI
                         }
                     }),
                     200
