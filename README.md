@@ -50,6 +50,21 @@ The API to communicate with client (or say frontend in the web fashion) are divi
     * If there is authentication required, then user and password are required
     * For the sake of convenience, there is no need to consider these two conditions (at least so far so good)
 
+    More details please refer to InfluxQL reference book in official website.
+    
+    Here is the `time duration literal`, you can replay the `1w` (one week) with other time range
+    **Time Duration Literal**
+    | Units  | Meaning                                 |
+    | ------ | --------------------------------------- |
+    | ns     | nanoseconds (1 billionth of a second)   |
+    | u or µ | microseconds (1 millionth of a second)  |
+    | ms     | milliseconds (1 thousandth of a second) |
+    | s      | second                                  |
+    | m      | minute                                  |
+    | h      | hour                                    |
+    | d      | day                                     |
+    | w      | week                                    |
+
 2. Move the csv file from remote server to local machine
     The idea is to use `scp`.
     
