@@ -32,6 +32,36 @@ The infrastructure of the backend includes (while not all of the following parts
 
 The API to communicate with client (or say frontend in the web fashion) are divided into two parts shown in the following sections.
 
+### How to export data from influxdb?
+
+*Note the procedure may vary depending on plenty of factors, including the port of influxdb, the ip address of influxdb deamon, the working directory. Of course, the idea is the same.*
+
+1. Export data to csv file
+    Login to the server (safesjtu running docker) and go to a suitable directory (`/home/data` or creates a directory named like `/tmp/bkup`).
+    Run code similar to the following snippet
+    ```bash
+    influx -database DriveS -precision rfc3339 \
+    -execute "select * from data where username='chendy' and time > now() - 1w" \
+    -format csv \
+    > data.csv
+    ```
+    This will take the most recent week data given the specific user, and export it to the file named `data.csv`
+    * If influxdb is no longer running in this docker (i.e. seperated in other docker), then ip address should be identified
+    * If there is authentication required, then user and password are required
+    * For the sake of convenience, there is no need to consider these two conditions (at least so far so good)
+
+2. Move the csv file from remote server to local machine
+    The idea is to use `scp`.
+    
+    The following command works for Linux (not for Windows, the syntax is different; thanks to MacOS's Unix-like design, it should work for Mac)
+    ```bash
+    scp -P 24011 root@server.acemap.cn:/data/data.csv ./
+    ```
+    This will transfer file (`/data/data.csv`) located in server to your local machine (in your current directory `./`).
+    * Password is required, please refer to slack or ask admin
+
+*As the port for influxdb is not exposed to public network, it seems impossible to fetch data with only one step. In other word, you have to login in the server and get the data first, and then fetch it.*
+    
 ### How to modify the algorithm and visualize it?
 
 Since the algorithm may be reused and tested in different sections by different developers, we decided to distribute it into a stand-alone repo `safesjtu-algo`. While this is a great idea to decouple different tasks, it introduces some advanced operation related to `git`.
